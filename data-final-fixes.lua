@@ -33,6 +33,7 @@ local blacklist_names = parse_csv(settings.startup["sqt-blacklist-names"].value)
 local remove_collision = settings.startup["sqt-remove-collision"].value
 local remove_types = parse_csv(settings.startup["sqt-remove-collision-types"].value)
 local remove_names = parse_csv(settings.startup["sqt-remove-collision-names"].value)
+local remove_partial_names = parse_csv(settings.startup["sqt-remove-collision-partial-names"].value)
 
 ---@type table<string, table<string, data.EntityPrototype>>
 local downgrades = {}
@@ -101,9 +102,17 @@ for _, prototype in pairs(prototypes) do
     local mask = cmu.get_mask(prototype)
     if mask.colliding_with_tiles_only then goto continue end
 
-    if remove_collision and remove_names[prototype.name] then
-        remove_player_collision(prototype)
-        goto continue
+    if remove_collision then
+        if remove_names[prototype.name] then
+            remove_player_collision(prototype)
+            goto continue
+        end
+        for partial_name, _ in pairs(remove_partial_names) do
+            if prototype.name:find(partial_name, 1, true) then
+                remove_player_collision(prototype)
+                goto continue
+            end
+        end
     end
     if blacklist_names[prototype.name] then goto continue end
 

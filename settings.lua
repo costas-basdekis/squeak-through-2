@@ -48,4 +48,11 @@ data:extend{{
     default_value = "",
     allow_blank = true,
     order = "cc",
+}, {
+    type = "string-setting",
+    name = "sqt-remove-collision-partial-names",
+    setting_type = "startup",
+    default_value = "",
+    allow_blank = true,
+    order = "cd",
 }}
